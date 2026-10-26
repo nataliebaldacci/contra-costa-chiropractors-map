@@ -1,6 +1,6 @@
 # Contra Costa chiropractic licensees, interactive map
 
-Every Board of Chiropractic Examiners license with a Contra Costa County address of record (627 located so far, 497 valid), pulled from the California DCA license search (search.dca.ca.gov) on 2026-10-26 and placed on the County Assessor parcel. Click a point for the record (name, license, status, address of record, Assessor land use, APN) and a link to the DCA page.
+Every Board of Chiropractic Examiners license with a Contra Costa County address of record (838 located so far, 497 valid), pulled from the California DCA license search (search.dca.ca.gov) on 2026-10-26 and placed on the County Assessor parcel. Click a point for the record (name, license, status, address of record, Assessor land use, APN) and a link to the DCA page.
 
 Live map: https://nataliebaldacci.github.io/contra-costa-chiropractors-map/
 
