@@ -95,7 +95,7 @@ function openPopup(c,p){const addr=(p.street||'')+(p.suite?' '+p.suite:'')+(p.ci
   const html=`<b>${p.name}</b><br>${p.type.toLowerCase()} ${p.lic} <span class="st ${p.status}">${p.status}</span>${p.exp?'<br>expires '+p.exp:''}${p.iss?', issued '+p.iss:''}<br>${addr}<br><i>${p.use||'parcel not matched'}</i>${p.jur?'<br>'+p.jur:''}${p.yr?'<br>built '+p.yr:''}${p.sqft?', '+p.sqft+' sq ft':''}${p.apn?'<br>APN '+p.apn:''}${p.match&&p.match!=='exact'?' ('+p.match+')':''}${p.n_here>1?'<br>'+p.n_here+' licenses on this parcel':''}<br><a href="${p.url}" target="_blank" rel="noopener">DCA record</a>`;
   new maplibregl.Popup({maxWidth:'320px'}).setLngLat(c).setHTML(html).addTo(map);}
 function applyFilter(){const on=[...document.querySelectorAll('.f')].filter(c=>c.checked).map(c=>['all',['==',['get','type'],c.dataset.type],['==',['get','valid'],+c.dataset.valid]]);
-  const f=['all',on.length?['any',...on]:['==',1,0]]; const city=document.getElementById('city').value; const use=document.getElementById('use').value;
+  const f=['all',on.length?['any',...on]:['==',['get','type'],'__none__']]; const city=document.getElementById('city').value; const use=document.getElementById('use').value;
   if(city) f.push(['==',['get','city'],city]); if(use) f.push(['==',['get','usegroup'],use]);
   for(const id of ['pts','pts-halo','pts-label']) if(map.getLayer(id)) map.setFilter(id,f);
   const n=DATA.features.filter(x=>{const p=x.properties; return on.some(o=>o[1][2]===p.type&&o[2][2]===p.valid)&&(!city||p.city===city)&&(!use||p.usegroup===use);}).length;
