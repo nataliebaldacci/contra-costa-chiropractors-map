@@ -43,6 +43,7 @@ let DATA,MASK,COUNTY,CITIES;
 const COL=['case',['all',['==',['get','type'],'CHIROPRACTOR'],['==',['get','valid'],1]],'#1c458c',['all',['==',['get','type'],'SATELLITE'],['==',['get','valid'],1]],'#f0af1e',['all',['==',['get','type'],'CORPORATION'],['==',['get','valid'],1]],'#2a9d8f',['==',['get','type'],'CHIROPRACTOR'],'#9aa5b8',['==',['get','type'],'SATELLITE'],'#d9c58a','#9fcfc8'];
 const HOME=[-122.02,37.93], HOMEZ=10.3;
 
+
 /*ADDR*/ {const p=new pmtiles.Protocol(); maplibregl.addProtocol("pmtiles",p.tile);} /*/ADDR*/
 const map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/positron',center:HOME,zoom:HOMEZ,attributionControl:false});
 map.addControl(new maplibregl.NavigationControl(),'top-right'); map.addControl(new maplibregl.ScaleControl({unit:'imperial'}),'bottom-right');
@@ -77,9 +78,10 @@ map.on('load',async()=>{ [DATA,MASK,COUNTY,CITIES]=await Promise.all(['data/lice
   map.on('mouseenter','permits',()=>map.getCanvas().style.cursor='pointer'); map.on('mouseleave','permits',()=>map.getCanvas().style.cursor='');
 /*/PERMITS*/
 
+
 /*ADDR*/
   map.addSource('addr',{type:'vector',url:'pmtiles://'+new URL('data/addresses.pmtiles',location.href).href});
-  map.addLayer({id:'addr',type:'symbol',source:'addr','source-layer':'addr',minzoom:16.5,layout:{'text-field':['step',['zoom'],['get','n'],18.5,['get','a']],'text-font':['Noto Sans Regular'],'text-size':['interpolate',['linear'],['zoom'],16.5,10,19,12],'text-allow-overlap':false,'text-padding':1},paint:{'text-color':'#5a4a2a','text-halo-color':'#fff','text-halo-width':1.3}});
+  map.addLayer({id:'addr',type:'symbol',source:'addr','source-layer':'addr',minzoom:15.8,layout:{'text-field':['step',['zoom'],['get','n'],18.5,['get','a']],'text-font':['Noto Sans Regular'],'text-size':['interpolate',['linear'],['zoom'],15.8,10,19,13],'text-allow-overlap':false,'text-padding':1},paint:{'text-color':'#3d2f12','text-halo-color':'#fff','text-halo-width':1.3}});
   document.getElementById('bAddr').onclick=e=>{const b=e.target;b.classList.toggle('on');map.setLayoutProperty('addr','visibility',b.classList.contains('on')?'visible':'none');};
 /*/ADDR*/
   applyFilter();
