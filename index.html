@@ -27,7 +27,7 @@ button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
 <div id="map"></div><button id="toggle">Filters</button>
 <div id="panel"><h1>Chiropractic licensees, Contra Costa County</h1>
 <div class="sub">Every Board of Chiropractic Examiners license with a Contra Costa address of record (DCA license search, pulled 2026-10-26), placed on the County Assessor parcel. <span id="count"></span></div>
-<input type="search" id="q" placeholder="Search a name, license number or street" autocomplete="off"><div id="hits"></div>
+<form autocomplete="off" onsubmit="return false"><input type="search" id="q" placeholder="Search a name, license number or street" autocomplete="off"></form><div id="hits"></div>
 <div class="row"><select id="city"><option value="">Every city</option><option>ALAMO</option><option>ANTIOCH</option><option>BLACKHAWK</option><option>BRENTWOOD</option><option>CLAYTON</option><option>CONCORD</option><option>DANVILLE</option><option>DISCOVERY BAY</option><option>EL CERRITO</option><option>EL SOBRANTE</option><option>HERCULES</option><option>LAFAYETTE</option><option>MARTINEZ</option><option>MORAGA</option><option>OAKLEY</option><option>ORINDA</option><option>PACHECO</option><option>PINOLE</option><option>PITTSBURG</option><option>PLEASANT HILL</option><option>RICHMOND</option><option>RODEO</option><option>SAN PABLO</option><option>SAN RAMON</option><option>WALNUT CREEK</option></select>
 <select id="use"><option value="">Every parcel type</option><option>Medical, Dental (34)</option><option>Office building (33)</option><option>Residential parcel</option><option>Other</option></select></div>
 <label><input type="checkbox" class="f" data-type="CHIROPRACTOR" data-valid="1" checked><span class="sw" style="background:#1c458c"></span>Chiropractor, valid license</label>
@@ -36,8 +36,8 @@ button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
 <label><input type="checkbox" class="f" data-type="CHIROPRACTOR" data-valid="0"><span class="sw" style="background:#9aa5b8"></span>Chiropractor, lapsed or other status</label>
 <label><input type="checkbox" class="f" data-type="SATELLITE" data-valid="0"><span class="sw" style="background:#d9c58a"></span>Satellite, lapsed</label>
 <label><input type="checkbox" class="f" data-type="CORPORATION" data-valid="0"><span class="sw" style="background:#9fcfc8"></span>Corporation, lapsed</label>
-<div style="margin-top:8px"><button id="bParcels" class="on">County parcels and streets (zoom in)</button><button id="bAerial">2019 aerial</button><button id="bReset">Reset view</button></div>
-<div class="foot">Click a point for the record. Points on one parcel are fanned out so each can be clicked. Base map: OpenFreeMap (OpenMapTiles schema, OpenStreetMap data). County layers: Contra Costa County GIS (gis.cccounty.us). Parcel land use: County Assessor use code (34 = Medical, Dental; 33 = Office Buildings; 11 = single family home).</div></div>
+<div style="margin-top:8px"><button id="bParcels" class="on">County parcel lines (zoom in)</button><button id="bAerial">2019 aerial</button><button id="bReset">Reset view</button></div>
+<div class="foot">Click a point for the record. Points on one parcel are fanned out so each can be clicked. Base map: OpenFreeMap (OpenMapTiles schema, OpenStreetMap data). County parcel lines and aerial: Contra Costa County GIS (gis.cccounty.us). Parcel land use: County Assessor use code (34 = Medical, Dental; 33 = Office Buildings; 11 = single family home).</div></div>
 <script>
 let DATA,MASK,COUNTY,CITIES;
 const COL=['case',['all',['==',['get','type'],'CHIROPRACTOR'],['==',['get','valid'],1]],'#1c458c',['all',['==',['get','type'],'SATELLITE'],['==',['get','valid'],1]],'#f0af1e',['all',['==',['get','type'],'CORPORATION'],['==',['get','valid'],1]],'#2a9d8f',['==',['get','type'],'CHIROPRACTOR'],'#9aa5b8',['==',['get','type'],'SATELLITE'],'#d9c58a','#9fcfc8'];
@@ -45,14 +45,14 @@ const HOME=[-122.02,37.93], HOMEZ=10.3;
 const map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/positron',center:HOME,zoom:HOMEZ,attributionControl:false});
 map.addControl(new maplibregl.NavigationControl(),'top-right'); map.addControl(new maplibregl.ScaleControl({unit:'imperial'}),'bottom-right');
 map.addControl(new maplibregl.AttributionControl({compact:true,customAttribution:'Points: DCA license search 2026-10-26; parcels: Contra Costa County; base: OpenFreeMap, OpenStreetMap contributors'}),'bottom-right');
-const AES='https://gis.cccounty.us/arcgis/rest/services/AES/AES/MapServer/export?bbox={bbox-epsg-3857}&bboxSR=3857&imageSR=3857&size=512,512&layers=show:0,1&format=png32&transparent=true&dpi=96&f=image';
+const AES='https://gis.cccounty.us/arcgis/rest/services/AES/AES/MapServer/export?bbox={bbox-epsg-3857}&bboxSR=3857&imageSR=3857&size=512,512&layers=show:1&format=png32&transparent=true&dpi=96&f=image';
 const IMG='https://gis.cccounty.us/arcgis/rest/services/RASTER/img2019/MapServer/export?bbox={bbox-epsg-3857}&bboxSR=3857&imageSR=3857&size=512,512&format=jpg&f=image';
 map.on('load',async()=>{ [DATA,MASK,COUNTY,CITIES]=await Promise.all(['data/licensees.geojson','data/county_mask.geojson','data/county.geojson','data/cities.geojson'].map(u=>fetch(u).then(r=>r.json())));
   const firstSymbol=map.getStyle().layers.find(l=>l.type==='symbol').id;
   map.addSource('aerial',{type:'raster',tiles:[IMG],tileSize:512,attribution:'Contra Costa County 2019 aerial'});
   map.addLayer({id:'aerial',type:'raster',source:'aerial',layout:{visibility:'none'},paint:{'raster-opacity':0.95}},firstSymbol);
   map.addSource('aes',{type:'raster',tiles:[AES],tileSize:512,minzoom:14});
-  map.addLayer({id:'aes',type:'raster',source:'aes',minzoom:14,paint:{'raster-opacity':0.9}},firstSymbol);
+  map.addLayer({id:'aes',type:'raster',source:'aes',minzoom:14,paint:{'raster-opacity':0.55}},firstSymbol);
   map.addSource('mask',{type:'geojson',data:MASK}); map.addLayer({id:'mask',type:'fill',source:'mask',paint:{'fill-color':'#1b2a1c','fill-opacity':0.14}});
   map.addSource('county',{type:'geojson',data:COUNTY}); map.addLayer({id:'county-line',type:'line',source:'county',paint:{'line-color':'#1b4d1c','line-width':2.2}});
   map.addSource('cities',{type:'geojson',data:CITIES});
